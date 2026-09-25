@@ -676,9 +676,12 @@ class LDAPPlugin(BasePlugin):
         if not isinstance(group_id, six.text_type):
             group_id = group_id.decode("utf8")
         groups = self.groups
-        if not groups or group_id not in list(groups.keys()):
+        if not groups:
             return default
-        ugmgroup = self.groups[group_id]
+        try:
+            ugmgroup = groups[group_id]
+        except (KeyError, TypeError):
+            return default
         title = ugmgroup.attrs.get("title", None)
         group = PloneGroup(ugmgroup.id, title).__of__(self)
         pas = self._getPAS()
